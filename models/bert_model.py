@@ -28,7 +28,7 @@ from keras.utils.vis_utils import plot_model
 
 
 class TweetClassifier:
-    def __init__(self, df, args):
+    def __init__(self):
         self.df = df
         self.args = args
 
@@ -39,12 +39,12 @@ class TweetClassifier:
         self.y_train = None
         self.y_valid = None
 
-    def train_test_split(self):
-        self.train_data, self.valid_data = train_test_split(self.df, test_size=self.args.validation_split)
-        self.x_train = self.train_data['text']
-        self.x_valid = self.valid_data['text']
-        self.y_train = self.train_data['target']
-        self.y_valid = self.valid_data['target']
+    # def train_test_split(self):
+    #     self.train_data, self.valid_data = train_test_split(self.df, test_size=self.args.validation_split)
+    #     self.x_train = self.train_data['text']
+    #     self.x_valid = self.valid_data['text']
+    #     self.y_train = self.train_data['target']
+    #     self.y_valid = self.valid_data['target']
 
     def tokenization_padding(self):
         tokenizer = Tokenizer()
@@ -97,8 +97,11 @@ class TweetClassifier:
 
         return model
 
-    def fit(self):
-        self.train_test_split()
+    def fit(self, x_train, y_train, args):
+        self.x_train = x_train
+        self.y_train = y_train
+        self.args = args
+        # self.train_test_split()
         self.tokenization_padding()
 
         self.model = self.create_model()
