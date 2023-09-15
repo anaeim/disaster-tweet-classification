@@ -28,25 +28,48 @@ from keras.utils.vis_utils import plot_model
 
 
 class TweetClassifier:
-    def __init__(self):
-        self.df = df
-        self.args = args
+    """text classification model for disaster tweets
 
-        self.train_data = None
-        self.valid_data = None
+    ...
+
+    Attributes
+    ----------
+    x_train : pandas.DataFrame
+        dataset input for training the model
+    x_valid : pandas.DataFrame
+        dataset input for model validation
+    y_train : pandas.DataFrame
+        dataset target for training the model
+    y_valid : pandas.DataFrame
+        dataset target for model validation
+    args : namedtuple
+        the arguments pre-defined by the user and imported from config.py
+
+    Methods
+    -------
+    tokenization_padding()
+        applies necessary tokenization and padding for the LLM to reach the specified length
+    bert_encoder(texts, maximum_length)
+        encodes text based on pre-defined maximum_length and the encoder of the LLM
+    load_lm()
+        loads a LLM from transformers library based on the pre-defined LLM model
+    create_model()
+        creates a deep neural networks model using tensorflow library
+    fit(x_train, y_train, args)
+        fits the deep neural networks model on the x_train and y_train data considering the pre-defined args (arguments)
+    """
+
+    def __init__(self):
         self.x_train = None
         self.x_valid = None
         self.y_train = None
         self.y_valid = None
-
-    # def train_test_split(self):
-    #     self.train_data, self.valid_data = train_test_split(self.df, test_size=self.args.validation_split)
-    #     self.x_train = self.train_data['text']
-    #     self.x_valid = self.valid_data['text']
-    #     self.y_train = self.train_data['target']
-    #     self.y_valid = self.valid_data['target']
+        self.args = None
 
     def tokenization_padding(self):
+        """applies necessary tokenization and padding for the LLM to reach the specified length
+        """
+
         tokenizer = Tokenizer()
         tokenizer.fit_on_texts(self.x_train)
         word_index = tokenizer.word_index
@@ -58,6 +81,21 @@ class TweetClassifier:
 
     @staticmethod
     def bert_encoder(texts, maximum_length):
+        """encodes text based on pre-defined maximum_length and the encoder of the LLM
+
+        Parameters
+        ----------
+        texts : pandas.DataFrame
+            text column of the input data
+        maximum_length : int
+            maximum_length pre-defined by the user from config.py
+
+        Returns
+        -------
+        ndarray,ndarray
+            id of words,attention masks of words
+        """
+
         tokenizer = BertTokenizer.from_pretrained(self.args.lm)
 
         input_ids = []
@@ -77,9 +115,14 @@ class TweetClassifier:
         return np.array(input_ids),np.array(attention_masks)
 
     def load_lm(self):
+        """loads a LLM from transformers library based on the pre-defined LLM model
+        """
         return TFBertModel.from_pretrained(self.args.lm)
 
     def create_model(self):
+        """creates a deep neural networks model using tensorflow library
+        """
+
         input_ids = tf.keras.Input(shape=(60,),dtype='int32')
         attention_masks = tf.keras.Input(shape=(60,),dtype='int32')
 
@@ -98,6 +141,18 @@ class TweetClassifier:
         return model
 
     def fit(self, x_train, y_train, args):
+        """fits the deep neural networks model on the x_train and y_train data considering the pre-defined arguments
+
+        Parameters
+        ----------
+        x_train : pandas.DataFrame
+            dataset input for training the model
+        y_train : pandas.DataFrame
+            dataset target for training the model
+        args : namedtuple
+            the arguments defined by the user and import from config.py
+        """
+
         self.x_train = x_train
         self.y_train = y_train
         self.args = args
