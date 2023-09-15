@@ -27,9 +27,10 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 from keras.utils.vis_utils import plot_model
 
 
-class TweetClasifier:
-    def __init__(self, df):
+class TweetClassifier:
+    def __init__(self, df, args):
         self.df = df
+        self.args = args
 
         self.train_data = None
         self.valid_data = None
@@ -39,7 +40,7 @@ class TweetClasifier:
         self.y_valid = None
 
     def train_test_split(self):
-        self.train_data, self.valid_data = train_test_split(self.df,test_size = args.validation_split)
+        self.train_data, self.valid_data = train_test_split(self.df, test_size=self.args.validation_split)
         self.x_train = self.train_data['text']
         self.x_valid = self.valid_data['text']
         self.y_train = self.train_data['target']
@@ -57,7 +58,7 @@ class TweetClasifier:
 
     @staticmethod
     def bert_encoder(texts, maximum_length):
-        tokenizer = BertTokenizer.from_pretrained(args.lm)
+        tokenizer = BertTokenizer.from_pretrained(self.args.lm)
 
         input_ids = []
         attention_masks = []
@@ -76,7 +77,7 @@ class TweetClasifier:
         return np.array(input_ids),np.array(attention_masks)
 
     def load_lm(self):
-        return TFBertModel.from_pretrained(args.lm)
+        return TFBertModel.from_pretrained(self.args.lm)
 
     def create_model(self):
         input_ids = tf.keras.Input(shape=(60,),dtype='int32')
@@ -96,7 +97,7 @@ class TweetClasifier:
 
         return model
 
-    def train_model(self):
+    def fit(self):
         self.train_test_split()
         self.tokenization_padding()
 
@@ -106,6 +107,6 @@ class TweetClasifier:
         self.model.fit(
         [input_ids, attention_masks],
         self.y_train,
-        epochs=args.epochs,
-        batch_size=args.batch_size
+        epochs=self.args.epochs,
+        batch_size=self.args.batch_size
         )
