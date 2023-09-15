@@ -12,6 +12,19 @@ stop=set(stopwords.words('english'))
 
 
 def fill_na(df):
+    """fills na in pandas.DataFrame with an empty string
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        tweet classification dataset
+
+    Returns
+    -------
+    pandas.DataFrame
+        tweet classification dataset after pre-processing
+    """
+
     df['keyword'].fillna('', inplace=True)
     df['location'].fillna('', inplace=True)
 
@@ -19,6 +32,19 @@ def fill_na(df):
 
 
 def replace_locations(df):
+    """replaces city locations with the country that they located in, replaces country names with their abbreviated names
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        tweet classification dataset
+
+    Returns
+    -------
+    pandas.DataFrame
+        tweet classification dataset after pre-processing
+    """
+
     df['location'].replace({'United States':'USA',
                             'New York':'USA',
                             "London":'UK',
@@ -52,16 +78,42 @@ def replace_locations(df):
                             inplace=True
                             )
 
+    return df
+
 
 def drop_not_important_features(df):
-    df.drop(['keyword','id','location','len'],axis=1,inplace=True)
+    """drops features (pandas.DataFrame columns) that are less important for disaster tweet classification task
 
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        tweet classification dataset
+
+    Returns
+    -------
+    pandas.DataFrame
+        tweet classification dataset after pre-processing
+    """
+
+    df.drop(['keyword','id','location','len'],axis=1,inplace=True)
     return df
 
 
 def preprocess(text,stem=False):
-    text = text.lower() # lowercase
+    """applies pre-processing steps using regex functions, removes stop words for the text of one tweet
 
+    Parameters
+    ----------
+    text : str
+        the text of one tweet
+
+    Returns
+    -------
+    str
+        the text of one tweet after pre-processing
+    """
+
+    text = text.lower() # lowercase
     text = re.sub(r'[!]+', '!', text)
     text = re.sub(r'[?]+', '?', text)
     text = re.sub(r'[.]+', '.', text)
@@ -92,6 +144,19 @@ def preprocess(text,stem=False):
 
 
 def apply_preprocess(df):
+    """applies pre-processing steps using regex functions, removes stop words for the text of all the tweets in the dataset
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        tweet classification dataset
+
+    Returns
+    -------
+    pandas.DataFrame
+        tweet classification dataset after pre-processing
+    """
+
     stop_words = stopwords.words('english')
     stemmer = SnowballStemmer('english')
     lemmatizer = WordNetLemmatizer()
@@ -102,8 +167,20 @@ def apply_preprocess(df):
 
 
 def correct_spell(text):
-    spell = SpellChecker()
+    """applies spell correction for misspelled words in a the text of one tweet
 
+    Parameters
+    ----------
+    text : str
+        the text of one tweet
+
+    Returns
+    -------
+    str
+        the text of one tweet after pre-processing
+    """
+
+    spell = SpellChecker()
     corrected_text = []
     misspelled_words = spell.unknown(text.split())
 
@@ -117,10 +194,37 @@ def correct_spell(text):
 
 
 def apply_correct_check(df):
+    """applies spell correction for misspelled words in a the text of all the tweets in the dataset
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        tweet classification dataset
+
+    Returns
+    -------
+    pandas.DataFrame
+        tweet classification dataset after pre-processing
+    """
+
     df['text'] = df['text'].apply(lambda x:correct_spell(x))
+    return df
 
 
 def load_data_manipulation(df):
+    """applies all the data manipulation functions on the dataset
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        tweet classification dataset
+
+    Returns
+    -------
+    pandas.DataFrame
+        tweet classification dataset after pre-processing
+    """
+
     df = fill_na(df)
     df = replace_locations(df)
     df = apply_preprocess(df)
