@@ -43,4 +43,4 @@ The meaning of the flags:
 * ``--dataset-path``: the directory that contains the dataset
 * ``--ml-model``: the Machine Learning (ML) model that we use. Here I only include LLM-based tweet classification solution that is based on BERT model.
 * ``--lm``: the language model. We now support ``bert-base-uncased``, ``bert-base-cased``, ``bert-large-uncased``, and ``roberta`` (``bert-large-uncased`` by default).
-* ``--validation_split``, ``--epochs``, and ``--batch_size`` are the validation size, number of epochs and number of training examples, respectively.
+* ``--validation_split``, ``--epochs``, and ``--batch_size`` are the validation size, number of epochs and number of training examples in each iteration of the model, respectively.
