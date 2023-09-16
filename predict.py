@@ -3,8 +3,16 @@ from dataloader import data_loader
 from datamanipulation import data_manipulation
 import models
 
+from sklearn.model_selection import train_test_split
+
 
 def main():
+    """Main function to execute other packages or modules.
+
+    This function serves as the entry point of the program and orchestrates the execution
+    of various packages or modules.
+    """
+
     args = parse_args()
     df = data_loader.load()
     df = data_manipulation.load_data_manipulation(df)
@@ -20,6 +28,7 @@ def main():
 
     model = Model()
     model.fit(x_train, y_train, args)
+
 
 if __name__ == "__main__":
     main()
